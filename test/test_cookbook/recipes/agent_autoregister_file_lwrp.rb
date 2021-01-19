@@ -18,14 +18,14 @@ gocd_agent_autoregister_file '/var/mygo/autoregister.properties' do
   autoregister_key 'bla-key'
   autoregister_hostname 'mygo-agent'
   autoregister_environments 'stage'
-  autoregister_resources ['java-8', 'ruby']
+  autoregister_resources ['ruby']
 end
 
 gocd_agent_autoregister_file '/var/elastic/autoregister.properties' do
   autoregister_key 'some-key'
   autoregister_hostname 'elastic-agent'
   autoregister_environments 'testing'
-  autoregister_resources ['java-8']
+  autoregister_resources []
   elastic_agent_id 'agent-id'
   elastic_agent_plugin_id 'elastic-agent-plugin-id'
 end

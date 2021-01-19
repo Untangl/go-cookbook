@@ -38,6 +38,5 @@ recipe 'gocd::agent_linux', 'Install and configures Linux Go agent'
 recipe 'gocd::server_linux', 'Install and configures Linux Go server'
 
 depends 'apt', '>= 3.0.0'
-depends 'java'
 depends 'yum'
 depends 'windows'

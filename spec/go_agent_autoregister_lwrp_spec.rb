@@ -52,7 +52,7 @@ describe 'gocd_test::agent_autoregister_file_lwrp' do
         autoregister_key: 'some-key',
         autoregister_hostname: 'elastic-agent',
         autoregister_environments: 'testing',
-        autoregister_resources:     ['java-8']
+        autoregister_resources:     []
       )
     end
 
