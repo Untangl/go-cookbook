@@ -129,7 +129,7 @@ action :create do
   case node['gocd']['agent']['type']
   when 'java'
     service agent_name do
-      provider Chef::Provider::Service::Systemd if platform?('ubuntu') && node['platform_version'].to_f >= 16.04
+      provider Chef::Provider::Service::Systemd if (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2)
       supports status: true, restart: autoregister_values[:daemon], start: true, stop: true
       action   new_resource.service_action
     end

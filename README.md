@@ -24,6 +24,7 @@ This cookbook is here to help you setup GoCD servers and agents in an automated 
 
 This cookbook has been tested on the following platforms:
 
+* Amazon Linux = 2 (SHC)
 * Ubuntu >= 12.04
 * Debian
 * CentOS >= 6

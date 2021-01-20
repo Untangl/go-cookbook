@@ -1,0 +1,55 @@
+##########################################################################
+# Copyright 2017 ThoughtWorks, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+##########################################################################
+
+---
+driver:
+  name: vagrant
+  network:
+    - ["forwarded_port", {guest: 8153, host: 8153}]
+    - ["forwarded_port", {guest: 8154, host: 8154}]
+    - ["forwarded_port", {guest: 8080, host: 8080}]
+    - ["private_network", {ip: "192.168.56.102"}]
+  #  synced_folders: # Specify local share directory
+  #    - ["/Users/mark/Share", "/home/vagrant/share", 'create: true, type: "sshfs"']
+  #    - ["/Users/mark/Share", "/home/node/share", 'create: true, type: "sshfs"']
+  customize:
+    cpus: 2
+    memory: 4096
+
+
+provisioner:
+  name: chef_zero
+  # You may wish to disable always updating cookbooks in CI or other testing environments.
+  # For example:
+  #   always_update_cookbooks: <%= !ENV['CI'] %>
+  always_update_cookbooks: true
+  chef_license: accept-no-persist
+  product_name: chef
+  #  product_version: 14.10.9
+  product_version: 16.9.20
+
+platforms:
+  - name: al2 # amazon linux 2
+    driver:
+      box: gbailey/amzn2
+      box_version: 20200621.0.0 # latest version
+      network:
+        - [ 'private_network', { ip: '33.33.33.10' } ]
+
+
+suites:
+- name: default
+  run_list: ['recipe[gocd]']

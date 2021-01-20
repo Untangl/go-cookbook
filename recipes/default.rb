@@ -14,5 +14,6 @@
 # limitations under the License.
 ##########################################################################
 
+include_recipe 'gocd::java' # For AL2
 include_recipe 'gocd::server'
 include_recipe 'gocd::agent'

@@ -16,4 +16,4 @@
 
 # must be early so that java home attrbute gets assigned soon enough
 node.default!['java']['jdk_version'] = 11
-# include_recipe 'java'
+include_recipe 'gocd::java11al'

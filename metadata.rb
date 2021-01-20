@@ -21,14 +21,16 @@ maintainer_email 'go-cd@googlegroups.com'
 version          '3.0.2'
 source_url       'https://github.com/gocd/go-cookbook' if respond_to?(:source_url)
 issues_url       'https://github.com/gocd/go-cookbook/issues' if respond_to?(:issues_url)
-chef_version     '>= 12'
+chef_version     '>= 13'
 license          'Apache-2.0'
 
+supports 'amazon'
 supports 'ubuntu'
 supports 'centos'
 supports 'redhat'
 supports 'windows'
 
+recipe 'gocd::java11al', 'Installs Amazon Corretto 11'
 recipe 'gocd::server', 'Installs and configures a Go server'
 recipe 'gocd::agent', 'Installs and configures a Go agent'
 recipe 'gocd::repository', 'Installs the go yum/apt repository'
