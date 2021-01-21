@@ -75,18 +75,23 @@ action :create do
     proof_of_registration = "#{workspace}/config/guid.txt"
     autoregister_file_path = "#{workspace}/config/autoregister.properties"
     # package manages the init.d/go-agent script so cookbook should not.
+
+    # This assumed init.d service when eg AL2 is running systemd
     bash "setup init.d for #{agent_name}" do
       code <<-EOH
       cp /etc/init.d/go-agent /etc/init.d/#{agent_name}
       sed -i 's/# Provides: go-agent$/# Provides: #{agent_name}/g' /etc/init.d/#{agent_name}
       EOH
-      not_if "grep -q '# Provides: #{agent_name}$' /etc/init.d/#{agent_name}"
+#       not_if "grep -q '# Provides: #{agent_name}$' /etc/init.d/#{agent_name}"
+      not_if (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2)
       only_if { agent_name != 'go-agent' }
     end
     link "/usr/share/#{agent_name}" do
       to '/usr/share/go-agent'
       not_if { agent_name == 'go-agent' }
     end
+
+
   when 'golang'
     proof_of_registration = "#{workspace}/config/agent-id"
     autoregister_file_path = "#{workspace}/config/autoregister.sh" if autoregister_values[:key]
