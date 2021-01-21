@@ -83,7 +83,7 @@ action :create do
       sed -i 's/# Provides: go-agent$/# Provides: #{agent_name}/g' /etc/init.d/#{agent_name}
       EOH
 #       not_if "grep -q '# Provides: #{agent_name}$' /etc/init.d/#{agent_name}"
-      not_if (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2)
+      not_if { (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2) }
       only_if { agent_name != 'go-agent' }
     end
     link "/usr/share/#{agent_name}" do
