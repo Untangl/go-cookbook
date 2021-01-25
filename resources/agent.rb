@@ -76,7 +76,7 @@ action :create do
     autoregister_file_path = "#{workspace}/config/autoregister.properties"
     # package manages the init.d/go-agent script so cookbook should not.
 
-    if { (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2) } do
+    if  (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2)  do
       # This originally only assumed init.d service when eg AL2 is running systemd
       bash "setup systemd for #{agent_name}" do
         code <<-EOH
