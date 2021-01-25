@@ -76,34 +76,31 @@ action :create do
     autoregister_file_path = "#{workspace}/config/autoregister.properties"
     # package manages the init.d/go-agent script so cookbook should not.
 
-    # This assumed init.d service when eg AL2 is running systemd
-    bash "setup init.d for #{agent_name}" do
-      code <<-EOH
-      cp /etc/init.d/go-agent /etc/init.d/#{agent_name}
-      sed -i 's/# Provides: go-agent$/# Provides: #{agent_name}/g' /etc/init.d/#{agent_name}
-      EOH
-#       not_if "grep -q '# Provides: #{agent_name}$' /etc/init.d/#{agent_name}"
-      not_if { (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2) }
-      only_if { agent_name != 'go-agent' }
+    if { (platform?('ubuntu') && node['platform_version'].to_f >= 16.04) || (platform?('amazon') && node['platform_version'].to_f >= 2) } do
+      # This originally only assumed init.d service when eg AL2 is running systemd
+      bash "setup systemd for #{agent_name}" do
+        code <<-EOH
+        cp /etc/systemd/system/go-agent /etc/systemd/system/#{agent_name}
+        sed -i 's/# Provides: go-agent$/# Provides: #{agent_name}/g' /etc/init.d/#{agent_name}
+        EOH
+        only_if { agent_name != 'go-agent' }
+      end
+    else
+      bash "setup init.d for #{agent_name}" do
+        code <<-EOH
+        cp /etc/init.d/go-agent /etc/init.d/#{agent_name}
+        sed -i 's/# Provides: go-agent$/# Provides: #{agent_name}/g' /etc/init.d/#{agent_name}
+        EOH
+        not_if "grep -q '# Provides: #{agent_name}$' /etc/init.d/#{agent_name}"
+        only_if { agent_name != 'go-agent' }
+      end
     end
+
     link "/usr/share/#{agent_name}" do
       to '/usr/share/go-agent'
       not_if { agent_name == 'go-agent' }
     end
 
-
-  when 'golang'
-    proof_of_registration = "#{workspace}/config/agent-id"
-    autoregister_file_path = "#{workspace}/config/autoregister.sh" if autoregister_values[:key]
-
-    template "/etc/init.d/#{agent_name}" do
-      cookbook 'gocd'
-      source 'golang-agent-init.erb'
-      owner 'root'
-      group 'root'
-      mode 0755
-      variables(agent_name: agent_name, autoregister_file: autoregister_file_path)
-    end
   end
 
   template "/etc/default/#{agent_name}" do
@@ -138,10 +135,23 @@ action :create do
       supports status: true, restart: autoregister_values[:daemon], start: true, stop: true
       action   new_resource.service_action
     end
-  when 'golang'
-    service agent_name do
-      supports restart: true, start: true, stop: true
-      action   new_resource.service_action
-    end
-  end
 end
+
+
+
+=begin
+[Unit]
+Description=go-agent-1
+After=syslog.target
+
+[Service]
+Type=forking
+ExecStart=/usr/share/go-agent/bin/go-agent start sysd
+ExecStop=/usr/share/go-agent/bin/go-agent stop sysd
+User=go
+KillMode=control-group
+Environment=SYSTEMD_KILLMODE_WARNING=true
+
+[Install]
+WantedBy=multi-user.target
+=end
