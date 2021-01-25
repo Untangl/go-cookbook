@@ -135,6 +135,8 @@ action :create do
       supports status: true, restart: autoregister_values[:daemon], start: true, stop: true
       action   new_resource.service_action
     end
+  end
+
 end
 
 
